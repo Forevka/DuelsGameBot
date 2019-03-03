@@ -1,5 +1,7 @@
 A simple wrapper for [Duels](https://play.google.com/store/apps/details?id=com.deemedyainc.duels&hl=en_US) API game on Android 
+
 This game have many issue 
+
 Example code from game.py
 ```
 from duels_api import User
