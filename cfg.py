@@ -1,5 +1,5 @@
-my_id = '5c420b52de661c681ff98f46'
-my_clan_id = '5c7a3b6861219e178e50ccfb'
+my_id = ''
+my_clan_id = ''
 
 cool_users = ['5c100cd9ae70ec4f77f8b710',
                 '5bcf714aee26446aaa6cd67c',
