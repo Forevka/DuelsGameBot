@@ -2,6 +2,10 @@ A simple wrapper for [Duels](https://play.google.com/store/apps/details?id=com.d
 
 This game have many issue 
 
+Installing
+
+```pip install DuelsGameApi```
+
 Example code from game.py
 ```
 from duels_api import User
