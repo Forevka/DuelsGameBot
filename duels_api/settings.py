@@ -1,3 +1,6 @@
+import requests
+import json
+
 api_url = 'http://api-duels-test.galapagosgames.com/{}'
 
 headers = {
@@ -8,6 +11,23 @@ headers = {
     'Host': 'api-duels-test.galapagosgames.com',
 }
 
-
 def getKey(obj):
     return obj.get_stats()
+
+def load_users(file = 'users.json'):
+    l = []
+    try:
+        with open(file, 'r', encoding = 'utf8') as f:
+            l = json.loads(f.read())
+    except FileNotFoundError:
+        pass
+
+    return l
+
+def make_request(path, data, api_url = api_url):
+    r = requests.post(api_url.format(path), headers=headers, data=data)
+    j = json.loads(r.text)
+    if j.get('error', True) is True:
+        return j
+    else:
+        return None

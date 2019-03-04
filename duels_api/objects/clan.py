@@ -1,10 +1,10 @@
-import requests
 import json
 import random
 import logging
 
-from duels_api.settings import api_url, headers
 import duels_api
+from duels_api.settings import make_request
+
 
 class Clan():
     def __init__(self, clan_id: str, user_id: str, log = None):
@@ -24,19 +24,21 @@ class Clan():
 
     def get_me(self):
         data = '{"clanId":"'+str(self.id)+'","id":"'+str(self.owner_id)+'"}'
+        j = make_request('clan/info', data)
 
-        r = requests.post(api_url.format('clan/info'), headers=headers, data=data)
-        j = json.loads(r.text)
-        if j.get('error', None) is not None:
-            return None
-        else:
+        if j:
             return j
+        else:
+            return None
 
     def get_more_info(self):
         data = '{"chat":false,"id":"'+self.owner_id+'"}'
+        j = make_request('clan', data)
 
-        r = requests.post(api_url.format('clan'), headers=headers, data=data)
-        return json.loads(r.text)['clan']
+        if j:
+            return j['clan']
+        else:
+            return None
 
     def _get_owner(self):
         self.clan_info = self.get_me()
@@ -56,7 +58,7 @@ class Clan():
         if war is not None:
             return Clan(war['opponentClan']['_id'], self.owner_id, self.log)
 
-    def get_members(self):
+    def get_members(self) -> list:
         self.clan_info = self.get_me()
 
         for player in self.clan_info.get('members', []):
@@ -64,17 +66,21 @@ class Clan():
 
     def edit_description(self, clan_name: str = '', description: str = '') -> bool:
         data = '{"name":"'+(clan_name.encode('utf-8').decode('latin-1') if clan_name!='' else self.name.encode('utf-8').decode('latin-1'))+'","countryInfo":"UA","description":"'+(description.encode('utf-8').decode('latin-1') if description!='' else self.description.encode('utf-8').decode('latin-1'))+'","badge":{"backInfo":"ClanBadgeBackground001","backColor":"F04E0D","iconInfo":"ClanBadgeIcon009","iconColor":"FFFFFF"},"id":"'+str(self.owner_id)+'"}'
+        j = make_request('clan/edit', data)
 
-        r = requests.post(api_url.format('clan/edit'), headers=headers, data=data)
-        j = json.loads(r.text)
         return True if j.get('error', True) is True else False
 
     def get_leader(self):
-        return duels_api.User(self.owner_id, self.log, clan = self)
+        return duels_api.User(self.owner_id, clan = self)
 
     def __eq__(self, other) -> bool:
         if isinstance(other, Clan):
             if other.id == self.id:
+                return True
+            else:
+                return False
+        elif isinstance(other, str):
+            if other == self.id:
                 return True
             else:
                 return False

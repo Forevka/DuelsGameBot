@@ -1,5 +1,3 @@
-import random
-
 from duels_api import User
 import cfg
 

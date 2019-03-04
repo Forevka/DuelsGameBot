@@ -1,10 +1,8 @@
-import requests
-import json
-import random
 import logging
 
-from duels_api.settings import api_url, headers
 import duels_api
+from duels_api.settings import make_request
+
 
 class Item():
     def __init__(self, id:str, owner_id: str, type: str, rarity: str, info: str, value: int, log = None):
@@ -19,7 +17,6 @@ class Item():
 
         if log is None:
             self.log = logging.getLogger("Item")
-            self.log.setLevel(logging.DEBUG)
         else:
             self.log = log
 
@@ -28,26 +25,22 @@ class Item():
         elif info == 'Health':
             self.hp = value
 
-    def dissasemble(self):
+    def dissasemble(self) -> bool:
         data = '{"partId":"'+str(self.id)+'","id":"'+str(self.owner_id)+'"}'
+        j = make_request('inventory/disassemble', data)
 
-        r = requests.post(api_url.format('inventory/disassemble'), headers=headers, data=data)
-        j = json.loads(r.text)
-
-        if j.get('error', True) is True:
+        if j:
             self.log.debug("{} Dissasemble item".format(self.id))
             return True
         else:
             self.log.debug("{} Can`t dissasemble".format(self.id))
             return False
 
-    def equip(self):
+    def equip(self) -> bool:
         data = '{"partId":"'+str(self.id)+'","id":"'+str(self.owner_id)+'"}'
+        j = make_request('inventory/equip', data)
 
-        r = requests.post(api_url.format('inventory/equip'), headers=headers, data=data)
-        j = json.loads(r.text)
-
-        if j.get('error', True) is True:
+        if j:
             self.log.debug("{} Equiped item".format(self.id))
             return True
         else:
