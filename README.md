@@ -4,7 +4,7 @@ This game have many issue
 
 Installing
 
-```pip install DuelsGameApi```
+```pip install duels_api```
 
 Example code from game.py
 ```
